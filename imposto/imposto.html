@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Imposto</title>
+</head>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f2f2f2;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+
+    .card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        width: 300px;
+    }
+
+
+
+    .card__content {
+        padding: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 15px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    button {
+        background-color: #4caf50;
+        color: #fff;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 16px;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+
+    #resultado {
+        margin-top: 15px;
+        font-weight: bold;
+    }
+    .titulo{
+        display: flex;
+        flex-direction: column;
+        margin-right: 50px;
+    }
+</style>
+</head>
+
+<body>
+    <div class="titulo">
+        <h1>Calculadora</h1>
+      
+        <h1>de Imposto</h1>
+    </div>
+    <div class="card">
+
+        <div class="card__content">
+            <form id="calcularImpostoForm">
+                <label for="nome_produto">Nome do Produto:</label>
+                <input type="text" id="nome_produto" name="nome_produto" required>
+
+                <label for="valor_produto">Valor do Produto:</label>
+                <input type="number" step="0.01" id="valor_produto" name="valor_produto" required>
+
+                <button class="button" type="button" onclick="calcularImposto()">Calcular Imposto</button>
+            </form>
+
+            <div id="resultado"></div>
+        </div>
+    </div>
+
+
+    <script>
+        function calcularImposto() {
+            const nomeProduto = document.getElementById('nome_produto').value;
+            const valorProduto = document.getElementById('valor_produto').value;
+
+
+            fetch('http://localhost:5232/calcular_imposto', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ nome_produto: nomeProduto, valor_produto: valorProduto }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Exibindo o resultado
+                    document.getElementById('resultado').innerHTML = `
+          <p><strong>Nome do Produto:</strong> ${data.nome_produto}</p>
+          <p><strong>Valor do Produto:</strong> ${data.valor_produto.toFixed(2)}</p>
+          <p><strong>Valor do Imposto:</strong> ${data.valor_imposto.toFixed(2)}</p>
+        `;
+                })
+                .catch(error => {
+                    console.error('Erro ao calcular o imposto:', error);
+                    document.getElementById('resultado').innerHTML = '<p>Erro ao calcular o imposto.</p>';
+                });
+        }
+    </script>
+
+</body>
+
+</html>
